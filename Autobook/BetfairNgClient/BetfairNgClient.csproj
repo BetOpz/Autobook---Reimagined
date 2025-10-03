@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3D25A2D4-373D-4FC7-96CB-944025EF5B12}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BetfairNgClient</RootNamespace>
+    <AssemblyName>BetfairNgClient</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BetfairNgExchange.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Json\AccountDetailsResponse.cs" />
+    <Compile Include="Json\AccountFundsResponse.cs" />
+    <Compile Include="Json\CancelExecutionReport.cs" />
+    <Compile Include="Json\CancelInstruction.cs" />
+    <Compile Include="Json\CancelInstructionReport.cs" />
+    <Compile Include="Json\ClearedOrderSummary.cs" />
+    <Compile Include="Json\ClearedOrderSummaryReport.cs" />
+    <Compile Include="Json\Competition.cs" />
+    <Compile Include="Json\CurrentOrderSummary.cs" />
+    <Compile Include="Json\CurrentOrderSummaryReport.cs" />
+    <Compile Include="Json\Enums\BetStatusEnum.cs" />
+    <Compile Include="Json\Enums\EventStatusEnum.cs" />
+    <Compile Include="Json\Enums\EventTypeEnum.cs" />
+    <Compile Include="Json\Enums\GroupByEnum.cs" />
+    <Compile Include="Json\Enums\ItemClassEnum.cs" />
+    <Compile Include="Json\Enums\RaceStatusEnum.cs" />
+    <Compile Include="Json\Enums\ResponseCodeEnum.cs" />
+    <Compile Include="Json\Error.cs" />
+    <Compile Include="Json\ErrorData.cs" />
+    <Compile Include="Json\Event.cs" />
+    <Compile Include="Json\EventResult.cs" />
+    <Compile Include="Json\EventsMenuResponse.cs" />
+    <Compile Include="Json\EventType.cs" />
+    <Compile Include="Json\EventTypeResult.cs" />
+    <Compile Include="Json\ExBestOffersOverrides.cs" />
+    <Compile Include="Json\ExchangePrices.cs" />
+    <Compile Include="Json\Enums\ExecutionReportErrorCodeEnum.cs" />
+    <Compile Include="Json\Enums\ExecutionReportStatusEnum.cs" />
+    <Compile Include="Json\Enums\InstructionReportErrorCodeEnum.cs" />
+    <Compile Include="Json\Enums\InstructionReportStatusEnum.cs" />
+    <Compile Include="Json\AccountStatementReport.cs" />
+    <Compile Include="Json\INGException.cs" />
+    <Compile Include="Json\ItemDescription.cs" />
+    <Compile Include="Json\JsonConvert.cs" />
+    <Compile Include="Json\JsonRequest.cs" />
+    <Compile Include="Json\JsonResponse.cs" />
+    <Compile Include="Json\LimitOnCloseOrder.cs" />
+    <Compile Include="Json\LimitOrder.cs" />
+    <Compile Include="Json\LiveTennis\AvailableEvent.cs" />
+    <Compile Include="Json\LiveTennis\UpdateContext.cs" />
+    <Compile Include="Json\LiveTennis\UpdateKey.cs" />
+    <Compile Include="Json\LoginRequest.cs" />
+    <Compile Include="Json\LoginResponse.cs" />
+    <Compile Include="Json\Enums\MarketBettingTypeEnum.cs" />
+    <Compile Include="Json\MarketBook.cs" />
+    <Compile Include="Json\MarketCatalogue.cs" />
+    <Compile Include="Json\MarketDescription.cs" />
+    <Compile Include="Json\MarketFilter.cs" />
+    <Compile Include="Json\MarketOnCloseOrder.cs" />
+    <Compile Include="Json\MarketProfitAndLoss.cs" />
+    <Compile Include="Json\Enums\MarketProjectionEnum.cs" />
+    <Compile Include="Json\MarketSortEnum.cs" />
+    <Compile Include="Json\MarketStatusEnum.cs" />
+    <Compile Include="Json\Enums\MatchProjectionEnum.cs" />
+    <Compile Include="Json\Order.cs" />
+    <Compile Include="Json\OrderByEnum.cs" />
+    <Compile Include="Json\Enums\OrderProjectionEnum.cs" />
+    <Compile Include="Json\OrderStatus.cs" />
+    <Compile Include="Json\Enums\OrderTypeEnum.cs" />
+    <Compile Include="Json\PersistenceType.cs" />
+    <Compile Include="Json\PlaceExecutionReport.cs" />
+    <Compile Include="Json\PlaceInstruction.cs" />
+    <Compile Include="Json\PlaceInstructionReport.cs" />
+    <Compile Include="Json\ReplaceExecutionReport.cs" />
+    <Compile Include="Json\ReplaceInstruction.cs" />
+    <Compile Include="Json\ReplaceInstructionReport.cs" />
+    <Compile Include="Json\PriceDataEnum.cs" />
+    <Compile Include="Json\PriceProjection.cs" />
+    <Compile Include="Json\PriceSize.cs" />
+    <Compile Include="Json\RaceDetails.cs" />
+    <Compile Include="Json\RescriptRequest.cs" />
+    <Compile Include="Json\RollUpModelEnum.cs" />
+    <Compile Include="Json\Runner.cs" />
+    <Compile Include="Json\RunnerDescription.cs" />
+    <Compile Include="Json\RunnerId.cs" />
+    <Compile Include="Json\RunnerProfitAndLoss.cs" />
+    <Compile Include="Json\RunnerStatusEnum.cs" />
+    <Compile Include="Json\LiveTennis\Score.cs" />
+    <Compile Include="Json\Side.cs" />
+    <Compile Include="Json\SortDirEnum.cs" />
+    <Compile Include="Json\StartingPrices.cs" />
+    <Compile Include="Json\StatementItem.cs" />
+    <Compile Include="Json\StatementLegacyData.cs" />
+    <Compile Include="Json\TimeRange.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

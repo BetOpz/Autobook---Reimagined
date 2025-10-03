@@ -1,0 +1,20 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.suo
+*.dll
+*.pdb
+/BetfairNgClient/bin
+/BetfairNgClient/obj
+/bin
+/obj
+/packages
+*.psess
+*.vsp
+/AppSettings - Copy.cs
+/AppSettings - Copy.cs
+*.bak
+/.vs/Autobook.sqlite
+/.vs/Autobook/v15/Server/sqlite3
+/.vs

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<meta-data>
+  <last_modified_utc>634475464922548643</last_modified_utc>
+  <name>Properties</name>
+  <file>
+    <name>AssemblyInfo.cs</name>
+    <size>1246</size>
+    <hash>FB29F8F583DB038B310BD2CDEF8E87A8</hash>
+    <last_modified_utc>634475395147487737</last_modified_utc>
+    <last_created_utc>634457251760000000</last_created_utc>
+    <last_updated_utc>634475464360236480</last_updated_utc>
+  </file>
+  <file>
+    <name>Resources.Designer.cs</name>
+    <size>5404</size>
+    <hash>D3AA444F07B7D9A034F2FEBAE4A5A106</hash>
+    <last_modified_utc>634439372280000000</last_modified_utc>
+    <last_created_utc>634439372280000000</last_created_utc>
+    <last_updated_utc>634475464360236480</last_updated_utc>
+  </file>
+  <file>
+    <name>Resources.resx</name>
+    <size>8391</size>
+    <hash>1C081D96C803129E2870B79885723D72</hash>
+    <last_modified_utc>634119483820000000</last_modified_utc>
+    <last_created_utc>634119483820000000</last_created_utc>
+    <last_updated_utc>634475464360236480</last_updated_utc>
+  </file>
+</meta-data>

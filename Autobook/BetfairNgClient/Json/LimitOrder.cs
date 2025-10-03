@@ -1,0 +1,26 @@
+﻿using System.Text;
+using Newtonsoft.Json;
+
+namespace BetfairNgClient.Json
+{
+    public class LimitOrder
+    {
+        [JsonProperty(PropertyName = "size")]
+        public double Size { get; set; }
+
+        [JsonProperty(PropertyName = "price")]
+        public double Price { get; set; }
+
+        [JsonProperty(PropertyName = "persistenceType")]
+        public PersistenceTypeEnum PersistenceType { get; set; }
+
+        public override string ToString()
+        {
+            return new StringBuilder()
+                        .AppendFormat("Size={0}", Size)
+                        .AppendFormat(" : Price={0}", Price)
+                        .AppendFormat(" : PersistenceType={0}", PersistenceType)
+                        .ToString();
+        }
+    }
+}

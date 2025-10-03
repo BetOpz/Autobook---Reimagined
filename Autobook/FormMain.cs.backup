@@ -1,0 +1,319 @@
+using System;
+using System.Windows.Forms;
+
+//#if TEST
+//using BetfairE = BetfairClient.Framework.Test.com.betfair.api6.exchange;
+//using BetfairG = BetfairClient.Framework.Test.com.betfair.api6.global;
+//#else
+//using BetfairE = BetfairClient.Framework.com.betfair.api6.exchange;
+//using BetfairG = BetfairClient.Framework.com.betfair.api6.global;
+//#endif
+
+using PthLog;
+using System.Threading;
+
+namespace Autobook
+{
+  public partial class FormMain : Form
+  {
+    #region Private Members
+
+    //private delegate void PlaceBetDelegate (BetfairE.RunnerPrices[] runnerPrices, BetType type);
+    private delegate void SetErrorStatusDelegate (string errorMsg);
+    //private PlaceBetDelegate placeBetDelegate;
+    private Logger _logger;
+    private bool isClosing = false;
+
+    #endregion Private Members
+
+    public FormMain ()
+    {
+      _logger = LogManager.Current.AddLogger ("Autobook", Globals.MakeMainLogName ("Autobook.txt"), "%date [%-16thread] %-5level - %message%n");
+      Globals.SetLogger (_logger);
+      try
+      {
+        InitializeComponent ();
+
+        //SetStyle (ControlStyles.DoubleBuffer, true);
+        //SetStyle (ControlStyles.ResizeRedraw, true);
+
+        //placeBetDelegate = new PlaceBetDelegate (runnersControl1_OnPlaceBet);
+        //runnersControl1.OnPlaceBet += new RunnersControl.PlaceBetDelegate (runnersControl1_OnPlaceBet);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    private void FormMain_FormClosing (object sender, FormClosingEventArgs e)
+    {
+      //if (timerRefresh.Enabled)
+      //  timerRefresh.Enabled = false;
+      if (!isClosing)
+      {
+        _logger.Info ("Autobook stopped");
+        isClosing = true;
+        foreach (TabPage tp in tabControlMarkets.TabPages)
+        {
+          MarketTabPage mtp = tp as MarketTabPage;
+          if (mtp != null)
+            mtp.Stop ();
+        }
+        Globals.StopKeepAlive();
+        tabControlMarkets.TabPages.Clear ();
+        Application.Exit ();
+      }
+    }
+
+    private void SetErrorStatus (string errorMsg)
+    {
+      if (InvokeRequired)
+      {
+        Invoke (new SetErrorStatusDelegate (SetErrorStatus), new object[] { errorMsg });
+        return;
+      }
+
+      if (Globals.IsNetworkOnline)
+      {
+        //toolStripButtonNetworkStatus.Image = Properties.Resources.NetworkOn;
+        toolStripButtonNetworkStatus.Image = Properties.Resources.Knob_Green;
+        toolStripButtonNetworkStatus.Text = "Connected";
+      }
+      else
+      {
+        //toolStripButtonNetworkStatus.Image = Properties.Resources.NetworkOff;
+        toolStripButtonNetworkStatus.Image = Properties.Resources.Knob_Red;
+        toolStripButtonNetworkStatus.Text = "Disconnected";
+      }
+      toolStripLabelApiFailCount.Text = "API errors = " + Globals.ApiFailCount.ToString ();
+      toolStripLabelApiErrorMsg.Text = "Last error = " + errorMsg;
+    }
+
+    private void FormMain_Load (object sender, EventArgs e)
+    {
+      try
+      {
+        _logger.Info ("Autobook started, version ");
+        Console.WriteLine (Math.Sign (0.0d));
+        this.WindowState = FormWindowState.Normal;
+        SetErrorStatus (string.Empty);
+        string result = AppSettings.ReadSettings ();
+        if (!String.IsNullOrEmpty(result))
+        {
+            MessageBox.Show(this, result, "Load Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        FormMainLogin fml = new FormMainLogin();
+        DialogResult dr = fml.ShowDialog (this);
+        if (dr == DialogResult.Cancel)
+        {
+          _logger.Info ("Autobook stopping, login failed");
+          Application.Exit ();
+          return;
+        }
+
+        Globals.OnKeepAliveError += new Globals.OnKeepAliveErrorDelegate (Globals_OnKeepAliveError);
+        SetErrorStatus (string.Empty);
+
+        UpdateWallets ();
+
+          FormMarket2 fm = new FormMarket2 (tabControlMarkets);
+        fm.ShowDialog (this);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show (ex.Message, "Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    private void Globals_OnKeepAliveError (string errorMsg)
+    {
+      SetErrorStatus (errorMsg);
+    }
+
+    private void UpdateWallets ()
+    {
+      try
+      {
+          var ukAccountFunds = Globals.Exchange.GetAccountFunds(Globals.BETFAIR_EXCHANGE_UK);
+        Globals.UkWallet = ukAccountFunds.AvailableToBetBalance;
+        toolStripLabelUKWallet.Text = string.Format
+          ("UK Wallet: {0} {1}", Globals.UkWallet.ToString (), Globals.Exchange.Currency);
+          toolStripLabelPoints.Text = string.Format ("Points: {0}", Globals.Exchange.PointsBalance);
+        Globals.CheckNetworkStatusIsConnected ();
+      }
+      catch (Exception ex)
+      {
+        Globals.UnhandledException (ex);
+      }
+    }
+
+    /*
+        private void timerRefresh_Tick (object sender, EventArgs e)
+        {
+          try
+          {
+            UpdatePrices ();
+          }
+          catch (Exception ex)
+          {
+            Globals.UnhandledException (ex);
+          }
+        }
+
+        private void UpdatePrices ()
+        {
+          if (tabControlMarkets.SelectedTab != null)
+          {
+            MarketTabPage mtp = tabControlMarkets.SelectedTab as MarketTabPage;
+            if (mtp != null)
+              mtp.UpdatePrices ();
+          }
+        }
+    */
+
+    #region Place bets
+
+    /*
+		void HandleOnPlaceBet (BetfairE.RunnerPrices[] runnerPrices, BetType type)
+		{
+		}
+				void runnersControl1_OnPlaceBet (BetfairE.RunnerPrices[] runnerPrices, BetType type)
+				{
+					if (InvokeRequired)
+						Invoke (new PlaceBetDelegate (runnersControl1_OnPlaceBet), new object[] { runnerPrices, type });
+					else
+					{
+						ListViewItem lvi;
+						DateTime now = DateTime.Now;
+
+						switch (type)
+						{
+							case BetType.Back:
+								foreach (BetfairE.RunnerPrices rp in runnerPrices)
+								{
+									double backBook = Globals.GetBookShare (rp.bestPricesToBack[0].price);
+									double amount = backBook * AppSettings.PRBackAmount;
+									lvi = new ListViewItem (type.ToString ());
+									lvi.BackColor = Globals.BACK_COLOUR;
+									lvi.SubItems.Add (rp.bestPricesToBack[0].price.ToString ("##0.00"));
+									lvi.SubItems.Add (amount.ToString ("###0.##"));
+									lvi.SubItems.Add (now.ToLongTimeString ());
+									listViewBets.Items.Add (lvi);
+								}
+								break;
+
+							case BetType.Lay:
+								foreach (BetfairE.RunnerPrices rp in runnerPrices)
+								{
+									double layBook = Globals.GetBookShare (rp.bestPricesToLay[0].price);
+									double amount = layBook * AppSettings.PRLayAmount;
+									lvi = new ListViewItem (type.ToString ());
+									lvi.BackColor = Globals.LAY_COLOUR;
+									lvi.SubItems.Add (rp.bestPricesToLay[0].price.ToString ("##0.00"));
+									lvi.SubItems.Add (amount.ToString ("###0.##"));
+									lvi.SubItems.Add (now.ToLongTimeString ());
+									listViewBets.Items.Add (lvi);
+								}
+								break;
+						}
+					}
+				}
+		 */
+
+    #endregion Place bets
+
+    #region Add Market
+
+    private void toolStripButtonAddMarket_Click (object sender, EventArgs e)
+    {
+      try
+      {
+        FormMarkets fm = new FormMarkets ();
+        fm.OnMarketSelected += fm_OnMarketSelected;
+        fm.ShowDialog (this);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show (ex.Message, "Add Market", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    private void fm_OnMarketSelected (string marketId, DateTime startTime, string marketName)
+    {
+      try
+      {
+        MarketTabPage mtp = new MarketTabPage (marketId, startTime, marketName);
+        //mtp.OnDisplayWallet += new MethodInvoker (mtp_OnDisplayWallet);
+        mtp.FillMarketPrices ();
+        tabControlMarkets.TabPages.Add (mtp);
+        tabControlMarkets.SelectTab (mtp);
+#if !SIMULATION
+        mtp.DisplayBets ();
+#endif
+      }
+      catch (Exception ex)
+      {
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    private void DisplayWallets ()
+    {
+      if (InvokeRequired)
+      {
+        Invoke (new MethodInvoker (DisplayWallets));
+        return;
+      }
+
+      UpdateWallets ();
+    }
+
+    #endregion Add Market
+
+    private void toolStripButtonSettings_Click (object sender, EventArgs e)
+    {
+      try
+      {
+        FormSettings fs = new FormSettings ();
+        fs.ShowDialog (this);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show (ex.Message, "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    private void toolStripButtonWalletsRefresh_Click (object sender, EventArgs e)
+    {
+      DisplayWallets ();
+    }
+
+    private void toolStripButtonAddMarket2_Click (object sender, EventArgs e)
+    {
+      try
+      {
+        FormMarket2 fm = new FormMarket2 (tabControlMarkets);
+        fm.ShowDialog (this);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show (ex.Message, "Add Auto Market", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        _logger.Error (ex.ToString ());
+      }
+    }
+
+    public void CurrentDomain_UnhandledException (object sender, UnhandledExceptionEventArgs e)
+    {
+      Globals.UnhandledException ((Exception) e.ExceptionObject);
+    }
+
+    public void Application_ThreadException (object sender, ThreadExceptionEventArgs e)
+    {
+      Globals.UnhandledException (e.Exception);
+    }
+  }
+}
